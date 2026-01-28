@@ -259,13 +259,13 @@ body{
 
 /* 각 카드별 배경 이미지 */
 .bg-multi {
-  background-image: url("./assets/carousel_multi.png");
+  background-image: url("/assets/carousel_multi.png");
 }
 
 .bg-memory {
-  background-image: url("./assets/carousel_memory.png");
+  background-image: url("/assets/carousel_memory.png");
 }
 
 .bg-word {
-  background-image: url("./assets/carousel_word.png");
+  background-image: url("/assets/carousel_word.png");
 }

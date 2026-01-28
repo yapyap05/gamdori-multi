@@ -235,3 +235,63 @@ body{
     border: 1px solid rgba(255,255,255,.14);
     color: var(--text);
 }
+
+/* --- Typing Game Additions --- */
+.word-display {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    min-height: 100px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0; /* Space char handles visual gap */
+    padding: 24px;
+    background: rgba(0,0,0,.3);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,.12);
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+}
+
+.char {
+    transition: color 0.1s, transform 0.1s;
+    color: rgba(233,236,255,.35); /* Default dim */
+    position: relative;
+    white-space: pre; /* Keep space char valid */
+}
+
+/* 현재 입력해야 할 글자 (커서) */
+.char.current {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--neon2);
+    text-underline-offset: 6px;
+    opacity: 1;
+}
+
+/* 정답/오답 스타일 */
+.char.correct {
+    color: var(--good);
+    text-shadow: 0 0 10px rgba(56, 239, 125, 0.4);
+    opacity: 1;
+}
+
+.char.wrong {
+    color: var(--bad);
+    text-shadow: 0 0 10px rgba(255, 77, 109, 0.4);
+    text-decoration: line-through;
+    opacity: 1;
+}
+
+/* 입력창 스타일 강조 */
+#answerInput:disabled {
+    background: rgba(0,0,0,0.2);
+    border-color: transparent;
+    cursor: not-allowed;
+}
+#answerInput:focus {
+    background: rgba(0,0,0,0.4);
+    box-shadow: 0 0 0 4px rgba(0,229,255,.15);
+    border-color: var(--neon2);
+}

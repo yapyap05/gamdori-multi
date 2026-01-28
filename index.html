@@ -1,1240 +1,156 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>🎮️ Gamdori</title>
-
-  <!-- Bootstrap 5 -->
+  <title>🎮 Gamdori</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
+  <link rel="stylesheet" href="style.css">
   <style>
-    :root{
-      --bg0:#070812;
-      --bg1:#0b1030;
-      --neon:#7c4dff;
-      --neon2:#00e5ff;
-      --good:#38ef7d;
-      --bad:#ff4d6d;
-      --warn:#ffd54f;
-      --card:#0f173a;
-      --panel:#0b122c;
-      --text:#e9ecff;
-      --muted:#a9b2ff;
-      --glow: 0 0 10px rgba(124,77,255,.55), 0 0 30px rgba(0,229,255,.25);
-      --glow-strong: 0 0 12px rgba(124,77,255,.85), 0 0 40px rgba(0,229,255,.35);
-    }
-
-    body{
-      min-height:100vh;
-      color:var(--text);
-      background:
-        radial-gradient(900px 500px at 15% 10%, rgba(124,77,255,.25), transparent 55%),
-        radial-gradient(800px 520px at 85% 20%, rgba(0,229,255,.16), transparent 55%),
-        radial-gradient(900px 520px at 40% 90%, rgba(56,239,125,.10), transparent 60%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-    }
-
-    .wrap{ max-width: 980px; margin: 0 auto; }
-
-    .neon-title{
-      letter-spacing: .5px;
-      text-shadow: var(--glow-strong);
-    }
-
-    .glass{
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: 0 8px 30px rgba(0,0,0,.35);
-      backdrop-filter: blur(8px);
-    }
-
-    .machine{
-      background: linear-gradient(180deg, rgba(124,77,255,.12), rgba(0,229,255,.06));
-      border: 1px solid rgba(124,77,255,.22);
-      box-shadow: var(--glow);
-    }
-
-    .chip{
-      display:inline-flex; align-items:center; gap:.4rem;
-      padding:.2rem .55rem;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.22);
-      color: var(--text);
-      font-size:.85rem;
-      white-space:nowrap;
-    }
-
-    .mono{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-variant-numeric: tabular-nums;
-    }
-
-    /* Slot reels */
-    .reels{
-      display:grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: 12px;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .reel{
-      height: 110px;
-      border-radius: 16px;
-      background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(255,255,255,.06));
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow: inset 0 0 0 1px rgba(124,77,255,.10), var(--glow);
-      position: relative;
-      overflow:hidden;
-    }
-
-    .reel::before{
-      content:"";
-      position:absolute; inset:0;
-      background: linear-gradient(180deg, rgba(255,255,255,.15), transparent 20%, transparent 80%, rgba(0,0,0,.25));
-      pointer-events:none;
-    }
-
-    .reel .window{
-      position:absolute; inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size: 56px;
-      font-weight: 800;
-      text-shadow: var(--glow-strong);
-    }
-
-    .reel .stack{
-      position:absolute;
-      left:0; right:0;
-      top:0;
-      will-change: transform;
-      opacity: .85;
-      filter: blur(.2px);
-    }
-
-    .reel .stack .n{
-      height: 110px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size: 52px;
-      font-weight: 800;
-      color: rgba(233,236,255,.85);
-      text-shadow: var(--glow);
-    }
-
-    .op{
-      font-size: 44px;
-      font-weight: 900;
-      text-shadow: var(--glow-strong);
-      padding: 0 4px;
-      color: rgba(233,236,255,.95);
-      user-select:none;
-    }
-
-    .question-line{
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: .3px;
-      text-shadow: var(--glow);
-    }
-
-    .pulse{
-      animation:pulse 650ms ease-in-out;
-    }
-    @keyframes pulse{
-      0%{transform:scale(1)}
-      50%{transform:scale(1.03)}
-      100%{transform:scale(1)}
-    }
-
-    .shake{
-      animation:shake 340ms ease-in-out;
-    }
-    @keyframes shake{
-      0%{transform:translateX(0)}
-      25%{transform:translateX(-6px)}
-      50%{transform:translateX(6px)}
-      75%{transform:translateX(-4px)}
-      100%{transform:translateX(0)}
-    }
-
-    .blink{
-      animation:blink 650ms steps(1,end) infinite;
-    }
-    @keyframes blink{
-      50%{ opacity:.45; }
-    }
-
-    .timer-ring{
-      --p: 0%;
-      width: 56px;
-      height: 56px;
-      border-radius: 999px;
-      background:
-        conic-gradient(var(--neon2) var(--p), rgba(255,255,255,.12) 0);
-      display:grid;
-      place-items:center;
-      box-shadow: var(--glow);
-      border: 1px solid rgba(255,255,255,.12);
-    }
-    .timer-ring > div{
-      width: 44px;
-      height: 44px;
-      border-radius: 999px;
-      background: rgba(0,0,0,.30);
-      border: 1px solid rgba(255,255,255,.10);
-      display:grid;
-      place-items:center;
-      color: var(--text);
-      font-weight: 800;
-    }
-
-    .table-darkish{
-      --bs-table-bg: rgba(0,0,0,.22);
-      --bs-table-border-color: rgba(255,255,255,.10);
-      --bs-table-color: var(--text);
-    }
-
-    .btn-neon{
-      background: linear-gradient(90deg, rgba(124,77,255,.90), rgba(0,229,255,.75));
-      border: 0;
-      color: #071026;
-      font-weight: 800;
-      box-shadow: var(--glow);
-    }
-    .btn-neon:disabled{ opacity:.55; box-shadow:none; }
-
-    .form-control, .form-select{
-      background: rgba(0,0,0,.22);
-      border-color: rgba(255,255,255,.14);
-      color: var(--text);
-    }
-    .form-control::placeholder{ color: rgba(233,236,255,.45); }
-    .form-control:focus, .form-select:focus{
-      border-color: rgba(0,229,255,.55);
-      box-shadow: 0 0 0 .25rem rgba(0,229,255,.15);
-      background: rgba(0,0,0,.22);
-      color: var(--text);
-    }
-
-    .badge-soft{
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.14);
-      color: var(--text);
-    }
+    /* 인덱스 페이지 전용 추가 스타일 */
+    .carousel-item { height: 400px; border-radius: 20px; overflow: hidden; }
+    .carousel-caption { background: rgba(0, 0, 0, 0.6); border-radius: 15px; backdrop-filter: blur(10px); padding: 20px; bottom: 10%; }
+    .game-card { transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; height: 100%; }
+    .game-card:hover { transform: translateY(-10px); box-shadow: var(--glow-strong) !important; }
+    .card-img-top { height: 140px; object-fit: cover; filter: brightness(0.7); }
   </style>
 </head>
+<body class="py-5">
 
-<body class="py-4">
   <div class="wrap px-3">
-    <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
-      <div>
-        <h1 class="h3 mb-1 neon-title">연산x연산 <span class="text-white-50">겜도리 🎮️</span></h1>
-        <div class="text-white-50 small">
-          자리수 확률: <span class="mono">1&1(30%) / 1&2(50%) / 2&2(20%)</span> · 범위: <span class="mono">1~99</span>
+    <header class="text-center mb-5">
+      <h1 class="display-4 fw-bold neon-title">Gamdori Arcade 🎮</h1>
+      <p class="text-white-50">Let`s Brain Shower</p>
+    </header>
+
+    <section class="mb-5">
+      <div id="featuredCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#featuredCarousel" data-bs-slide-to="0" class="active"></button>
+          <button type="button" data-bs-target="#featuredCarousel" data-bs-slide-to="1"></button>
+          <button type="button" data-bs-target="#featuredCarousel" data-bs-slide-to="2"></button>
         </div>
-      </div>
-
-      <div class="d-flex flex-wrap gap-2">
-        <button id="btnStart" class="btn btn-neon">시작</button>
-        <button id="btnRestartStage" class="btn btn-outline-light">현재 단계 재시작</button>
-        <button id="btnRestartAll" class="btn btn-outline-warning">처음부터</button>
-      </div>
-    </div>
-
-    <div class="row g-3">
-      <!-- Left: Machine -->
-      <div class="col-12 col-lg-7">
-        <div class="card glass machine border-0">
-          <div class="card-body">
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-              <div class="d-flex flex-wrap gap-2">
-                <span class="chip"><span class="badge badge-soft">Stage</span> <span id="hudStage" class="mono fw-bold">-</span></span>
-                <span class="chip"><span class="badge badge-soft">Rule</span> <span id="hudRule" class="mono fw-bold">-</span></span>
-                <span class="chip"><span class="badge badge-soft">Need</span> <span id="hudNeed" class="mono fw-bold">-</span></span>
-                <span class="chip"><span class="badge badge-soft">Remain</span> <span id="hudRemain" class="mono fw-bold">-</span></span>
-              </div>
-
-              <div class="d-flex align-items-center gap-2">
-                <div class="timer-ring" id="timerRing" style="--p:0%;">
-                  <div class="mono" id="timerText">-</div>
-                </div>
-                <div>
-                  <div class="text-white-50 small">시간 제한</div>
-                  <div class="mono fw-bold"><span id="hudTimeLimit">-</span>s</div>
-                </div>
+        <div class="carousel-inner glass machine">
+          <div class="carousel-item active">
+            <div class="d-flex align-items-center justify-content-center h-100 bg-dark">
+              <div class="carousel-caption">
+                <h2 class="neon-title">계산x계산해</h2>
+                <p>사칙연산은 내가 최고!!</p>
+                <a href="multi-game.html" class="btn btn-neon">지금 플레이</a>
               </div>
             </div>
-
-            <div class="progress mb-3" style="height: 10px; background: rgba(255,255,255,.10);">
-              <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" style="width:0%"></div>
-            </div>
-
-            <!-- Slot Reels -->
-            <div class="p-3 rounded-4" style="background: rgba(0,0,0,.20); border: 1px solid rgba(255,255,255,.10);">
-              <div class="d-flex align-items-center justify-content-between mb-2">
-                <div class="text-white-50 small">SLOT</div>
-                <div class="d-flex flex-wrap gap-2">
-                  <span class="chip"><span class="badge badge-soft">Streak</span> <span id="hudStreak" class="mono fw-bold">0</span></span>
-                  <span class="chip"><span class="badge badge-soft">Score</span> <span id="hudScore" class="mono fw-bold">0</span></span>
-                </div>
-              </div>
-
-              <div class="reels mb-3">
-                <div class="reel" id="reelA">
-                  <div class="stack" id="stackA"></div>
-                  <div class="window mono" id="windowA">-</div>
-                </div>
-
-                <div class="op mono" id="opSymbol">?</div>
-
-                <div class="reel" id="reelB">
-                  <div class="stack" id="stackB"></div>
-                  <div class="window mono" id="windowB">-</div>
-                </div>
-              </div>
-
-              <div class="d-flex justify-content-center mb-2">
-                <div class="question-line mono text-center" id="questionLine">시작을 눌러주세요</div>
-              </div>
-
-              <div class="text-center">
-                <span id="spinBadge" class="badge text-bg-secondary mono d-none blink">SPINNING...</span>
+          </div>
+          <div class="carousel-item">
+            <div class="d-flex align-items-center justify-content-center h-100 bg-secondary">
+              <div class="carousel-caption">
+                <h2 class="neon-title">🚧 준비중</h2>
+                <p>Website Under Construction</p>
+                <a href="index.html" class="btn btn-neon">Comming Soon</a>
+                <!-- <h2 class="neon-title">기억력 테스트</h2>
+                <p>순간적으로 나타나는 숫자를 기억하세요</p>
+                <a href="sample1-game.html" class="btn btn-neon">도전하기</a> -->
               </div>
             </div>
-
-            <form id="answerForm" class="row g-2 align-items-center mt-3">
-              <div class="col-12 col-md-8">
-                <input id="answerInput" class="form-control form-control-lg mono" type="number" inputmode="numeric" placeholder="정답 입력" disabled />
+          </div>
+          <div class="carousel-item">
+            <div class="d-flex align-items-center justify-content-center h-100 bg-info">
+              <div class="carousel-caption">
+                <h2 class="neon-title">🚧 준비중</h2>
+                <p>Website Under Construction</p>
+                <a href="index.html" class="btn btn-neon">Comming Soon</a>
+                <!-- <h2 class="neon-title">스피드 타이핑</h2>
+                <p>제한 시간 내에 단어를 빠르게 입력하세요</p>
+                <a href="sample2-game.html" class="btn btn-neon">시작하기</a> -->
               </div>
-              <div class="col-12 col-md-4 d-grid">
-                <button id="btnSubmit" class="btn btn-success btn-lg" type="submit" disabled>제출</button>
-              </div>
-            </form>
-            <div class="form-text text-white-50">Enter로 제출 / Esc로 처음부터</div>
+            </div>
           </div>
         </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+        </button>
       </div>
+    </section>
 
-      <!-- Right: Controls + Log -->
-      <div class="col-12 col-lg-5">
-        <div class="card glass border-0 mb-3">
-          <div class="card-body">
-            <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
-              <div class="fw-bold">레벨 선택</div>
-              <span class="text-white-50 small">선택 후 시작</span>
-            </div>
-
-            <div class="row g-2 align-items-end">
-              <div class="col-7">
-                <label class="form-label text-white-50 mb-1">시작 단계</label>
-                <select id="stageSelect" class="form-select">
-                  <option value="1">1단계 (덧셈) · 대기3초 · 5회</option>
-                  <option value="2">2단계 (뺄셈) · 대기3초 · 5회</option>
-                  <option value="3">3단계 (나눗셈-몫) · 대기5초 · 3회</option>
-                  <option value="4">4단계 (곱셈) · 대기5초 · 3회</option>
-                </select>
-              </div>
-              <div class="col-5">
-                <label class="form-label text-white-50 mb-1">사운드</label>
-                <select id="soundSelect" class="form-select">
-                  <option value="on" selected>ON</option>
-                  <option value="off">OFF</option>
-                </select>
-              </div>
-            </div>
-
-            <hr style="border-color: rgba(255,255,255,.12);" />
-
-            <div class="d-flex flex-wrap gap-2">
-              <span class="chip"><span class="badge badge-soft">정답</span> <span id="hudCorrect" class="mono fw-bold">0</span></span>
-              <span class="chip"><span class="badge badge-soft">오답</span> <span id="hudWrong" class="mono fw-bold">0</span></span>
-              <span class="chip"><span class="badge badge-soft">타임아웃</span> <span id="hudTimeout" class="mono fw-bold">0</span></span>
-              <span class="chip"><span class="badge badge-soft">총 시도</span> <span id="hudAttempt" class="mono fw-bold">0</span></span>
-            </div>
-
-            <div class="mt-3 small text-white-50">
-              <div class="fw-semibold text-white mb-1">단계 규칙</div>
-              <ul class="mb-0">
-                <li>1: 덧셈 / 3초 대기 / 5회 정답</li>
-                <li>2: 뺄셈(음수 방지) / 3초 대기 / 5회 정답</li>
-                <li>3: 나눗셈(몫) / 5초 대기 / 3회 정답 (나누어떨어짐)</li>
-                <li>4: 곱셈 / 5초 대기 / 3회 정답</li>
-              </ul>
+    <section>
+      <h3 class="mb-4 text-white-50 mono">Game List</h3>
+      <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4">
+        
+        <div class="col">
+          <div class="card glass game-card border-0" onclick="location.href='multi-game.html'">
+            <div class="card-body">
+              <h5 class="card-title mono">Math Slot</h5>
+              <p class="card-text small text-white-50">사칙연산 게임</p>
+              <span class="badge badge-soft">Open</span>
             </div>
           </div>
         </div>
 
-        <div class="card glass border-0">
-          <div class="card-body">
-            <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
-              <div class="fw-bold">문제/정답 로그</div>
-              <div class="d-flex gap-2">
-                <button id="btnDownloadCsv" class="btn btn-outline-light btn-sm">CSV</button>
-                <button id="btnClearLog" class="btn btn-outline-danger btn-sm">비우기</button>
-              </div>
-            </div>
-
-            <div class="table-responsive" style="max-height: 360px;">
-              <table class="table table-sm table-darkish align-middle mb-0">
-                <thead style="position: sticky; top: 0; background: rgba(10,15,35,.95);">
-                  <tr>
-                    <th class="text-white-50">#</th>
-                    <th class="text-white-50">Stage</th>
-                    <th class="text-white-50">문제</th>
-                    <th class="text-white-50">입력</th>
-                    <th class="text-white-50">정답</th>
-                    <th class="text-white-50">결과</th>
-                    <th class="text-white-50">남은시간</th>
-                  </tr>
-                </thead>
-                <tbody id="logBody">
-                  <tr><td colspan="7" class="text-white-50">아직 기록이 없습니다.</td></tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="text-white-50 small mt-2">
-              팁: <span class="mono">Enter</span>로 제출, <span class="mono">Esc</span>로 처음부터 리셋
+        <div class="col">
+          <div class="card glass game-card border-0" onclick="location.href='sample1-game.html'">
+            <div class="card-body">
+              <h5 class="card-title mono">Memory</h5>
+              <p class="card-text small text-white-50">기억력 게임</p>
+              <span class="badge badge-soft text-warning">Comming Soon</span>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Toast -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
-      <div id="toast" class="toast align-items-center text-bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-          <div id="toastBody" class="toast-body">-</div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        <div class="col">
+          <div class="card glass game-card border-0" onclick="location.href='sample2-game.html'">
+            <div class="card-body">
+              <h5 class="card-title mono">Typing</h5>
+              <p class="card-text small text-white-50">타이핑 속도</p>
+              <span class="badge badge-soft">Comming Soon</span>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
 
+        <div class="col">
+          <div class="card glass game-card border-0" onclick="location.href='sample3-game.html'">
+            <div class="card-body">
+              <h5 class="card-title mono">Puzzle</h5>
+              <p class="card-text small text-white-50">조각 맞추기</p>
+              <span class="badge badge-soft text-white-50">Coming Soon</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card glass game-card border-0" onclick="location.href='sample4-game.html'">
+            <div class="card-body">
+              <h5 class="card-title mono">Reaction</h5>
+              <p class="card-text small text-white-50">반응 속도 측정</p>
+              <span class="badge badge-soft text-white-50">Comming Soon</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card glass game-card border-0" onclick="location.href='sample5-game.html'">
+            <div class="card-body">
+              <h5 class="card-title mono">Pattern</h5>
+              <p class="card-text small text-white-50">패턴 찾기</p>
+              <span class="badge badge-soft text-white-50">Comming Soon</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <footer class="mt-5 pt-5 text-center border-top border-secondary border-opacity-25">
+      <div class="d-flex justify-content-center gap-4 text-white-50 small mono">
+        <span>Total Plays: 1,240</span>
+        <span>Online: 42</span>
+        <span>Last Update: 2026.01.28</span>
+      </div>
+    </footer>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-  <script>
-    // --------------------------------------------
-    // Config
-    // --------------------------------------------
-    const STAGES = [
-      { stage: 1, op: '+', name: '덧셈', waitSec: 3, needCorrect: 5, timeLimitSec: 6 },
-      { stage: 2, op: '-', name: '뺄셈', waitSec: 3, needCorrect: 5, timeLimitSec: 7 },
-      { stage: 3, op: '÷', name: '나눗셈(몫)', waitSec: 5, needCorrect: 3, timeLimitSec: 8 },
-      { stage: 4, op: '×', name: '곱셈', waitSec: 5, needCorrect: 3, timeLimitSec: 8 },
-    ];
-
-    const DIGIT_PAIR_WEIGHTS = [
-      { key: '1-1', p: 0.30 },
-      { key: '1-2', p: 0.50 },
-      { key: '2-2', p: 0.20 },
-    ];
-
-    const LOG_LIMIT = 150;
-
-    // --------------------------------------------
-    // DOM
-    // --------------------------------------------
-    const btnStart = document.getElementById('btnStart');
-    const btnRestartStage = document.getElementById('btnRestartStage');
-    const btnRestartAll = document.getElementById('btnRestartAll');
-
-    const stageSelect = document.getElementById('stageSelect');
-    const soundSelect = document.getElementById('soundSelect');
-
-    const hudStage = document.getElementById('hudStage');
-    const hudRule = document.getElementById('hudRule');
-    const hudNeed = document.getElementById('hudNeed');
-    const hudRemain = document.getElementById('hudRemain');
-    const hudTimeLimit = document.getElementById('hudTimeLimit');
-
-    const hudStreak = document.getElementById('hudStreak');
-    const hudScore = document.getElementById('hudScore');
-    const hudCorrect = document.getElementById('hudCorrect');
-    const hudWrong = document.getElementById('hudWrong');
-    const hudTimeout = document.getElementById('hudTimeout');
-    const hudAttempt = document.getElementById('hudAttempt');
-
-    const progressBar = document.getElementById('progressBar');
-
-    const reelA = document.getElementById('reelA');
-    const reelB = document.getElementById('reelB');
-    const stackA = document.getElementById('stackA');
-    const stackB = document.getElementById('stackB');
-    const windowA = document.getElementById('windowA');
-    const windowB = document.getElementById('windowB');
-    const opSymbol = document.getElementById('opSymbol');
-    const questionLine = document.getElementById('questionLine');
-    const spinBadge = document.getElementById('spinBadge');
-
-    const answerForm = document.getElementById('answerForm');
-    const answerInput = document.getElementById('answerInput');
-    const btnSubmit = document.getElementById('btnSubmit');
-
-    const timerRing = document.getElementById('timerRing');
-    const timerText = document.getElementById('timerText');
-
-    const logBody = document.getElementById('logBody');
-    const btnClearLog = document.getElementById('btnClearLog');
-    const btnDownloadCsv = document.getElementById('btnDownloadCsv');
-
-    const toastEl = document.getElementById('toast');
-    const toastBody = document.getElementById('toastBody');
-    const toast = new bootstrap.Toast(toastEl, { delay: 1700 });
-
-    // --------------------------------------------
-    // Audio (WebAudio) - slot-ish beeps
-    // --------------------------------------------
-    const AudioFX = (() => {
-      let ctx = null;
-      function ensure() {
-        if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
-        return ctx;
-      }
-      function enabled() {
-        return soundSelect.value !== 'off';
-      }
-      function beep({ freq = 440, dur = 0.08, type = 'sine', gain = 0.06 } = {}) {
-        if (!enabled()) return;
-        const c = ensure();
-        const t0 = c.currentTime;
-
-        const o = c.createOscillator();
-        const g = c.createGain();
-
-        o.type = type;
-        o.frequency.value = freq;
-
-        g.gain.setValueAtTime(0.0001, t0);
-        g.gain.exponentialRampToValueAtTime(gain, t0 + 0.01);
-        g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-
-        o.connect(g).connect(c.destination);
-        o.start(t0);
-        o.stop(t0 + dur + 0.02);
-      }
-      function sequence(steps) {
-        if (!enabled()) return;
-        const c = ensure();
-        let at = c.currentTime;
-        for (const s of steps) {
-          const o = c.createOscillator();
-          const g = c.createGain();
-          o.type = s.type || 'sine';
-          o.frequency.value = s.freq || 440;
-          const dur = s.dur ?? 0.07;
-          const gain = s.gain ?? 0.06;
-
-          g.gain.setValueAtTime(0.0001, at);
-          g.gain.exponentialRampToValueAtTime(gain, at + 0.008);
-          g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
-
-          o.connect(g).connect(c.destination);
-          o.start(at);
-          o.stop(at + dur + 0.02);
-
-          at += (dur + (s.gap ?? 0.02));
-        }
-      }
-
-      return {
-        unlock() { if (enabled()) ensure().resume?.(); },
-        spinTick() { beep({ freq: 820 + Math.random()*120, dur: 0.03, type: 'square', gain: 0.03 }); },
-        correct() { sequence([{freq:660,dur:.07,type:'triangle',gain:.07},{freq:880,dur:.09,type:'triangle',gain:.08},{freq:990,dur:.11,type:'sine',gain:.08}]); },
-        wrong() { sequence([{freq:220,dur:.12,type:'sawtooth',gain:.06},{freq:180,dur:.14,type:'sawtooth',gain:.06}]); },
-        timeout() { sequence([{freq:320,dur:.08,type:'square',gain:.05},{freq:240,dur:.16,type:'square',gain:.06}]); },
-        stageUp() { sequence([{freq:523.25,dur:.08,type:'sine',gain:.06},{freq:659.25,dur:.08,type:'sine',gain:.06},{freq:783.99,dur:.12,type:'sine',gain:.07}]); },
-      };
-    })();
-
-    // --------------------------------------------
-    // State
-    // --------------------------------------------
-    const state = {
-      running: false,
-      stageIndex: 0,
-      gotCorrectThisStage: 0,
-
-      streak: 0,
-      score: 0,
-
-      correct: 0,
-      wrong: 0,
-      timeout: 0,
-      attempt: 0,
-
-      current: null, // { a,b,op,answer,display, stage, startedAt, timeLimitSec }
-      lockInput: true,
-      phase: 'idle', // idle | spinning | waiting | answering | finished
-
-      timers: {
-        spin: null,
-        waitUnlock: null,
-        questionTick: null,
-        questionTimeout: null,
-      },
-
-      log: [],
-      seq: 0,
-    };
-
-    // --------------------------------------------
-    // Utils
-    // --------------------------------------------
-    function randInt(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    function pickWeighted(items) {
-      const r = Math.random();
-      let acc = 0;
-      for (const it of items) {
-        acc += it.p;
-        if (r <= acc) return it;
-      }
-      return items[items.length - 1];
-    }
-
-    function randByDigits(d) {
-      return (d === 1) ? randInt(1, 9) : randInt(10, 99);
-    }
-
-    function pickDigitPair() {
-      const { key } = pickWeighted(DIGIT_PAIR_WEIGHTS);
-      const [d1, d2] = key.split('-').map(Number);
-      if (d1 === 1 && d2 === 2) return (Math.random() < 0.5) ? [1, 2] : [2, 1];
-      return [d1, d2];
-    }
-
-    function stageInfo() {
-      return STAGES[state.stageIndex];
-    }
-
-    function setToast(msg, kind = 'dark') {
-      toastEl.className = `toast align-items-center text-bg-${kind} border-0`;
-      toastBody.textContent = msg;
-      toast.show();
-    }
-
-    function clearTimers() {
-      for (const k of Object.keys(state.timers)) {
-        if (state.timers[k]) {
-          if (k === 'spin' || k === 'questionTick') clearInterval(state.timers[k]);
-          else clearTimeout(state.timers[k]);
-        }
-        state.timers[k] = null;
-      }
-    }
-
-    function setInputLocked(locked) {
-      state.lockInput = locked;
-      answerInput.disabled = locked;
-      btnSubmit.disabled = locked;
-      if (!locked) {
-        answerInput.focus();
-        answerInput.select();
-      }
-    }
-
-    function setRingProgress(pct, text) {
-      timerRing.style.setProperty('--p', `${Math.max(0, Math.min(100, pct))}%`);
-      timerText.textContent = text;
-    }
-
-    function updateHUD() {
-      const info = stageInfo();
-      hudStage.textContent = `${info.stage}`;
-      hudRule.textContent = `${info.name} (${info.op})`;
-      hudNeed.textContent = `${info.needCorrect}`;
-      hudRemain.textContent = `${Math.max(0, info.needCorrect - state.gotCorrectThisStage)}`;
-      hudTimeLimit.textContent = `${info.timeLimitSec}`;
-
-      hudStreak.textContent = `${state.streak}`;
-      hudScore.textContent = `${state.score}`;
-      hudCorrect.textContent = `${state.correct}`;
-      hudWrong.textContent = `${state.wrong}`;
-      hudTimeout.textContent = `${state.timeout}`;
-      hudAttempt.textContent = `${state.attempt}`;
-
-      const pct = (state.gotCorrectThisStage / info.needCorrect) * 100;
-      progressBar.style.width = `${Math.max(0, Math.min(100, pct))}%`;
-      progressBar.classList.toggle('bg-success', pct >= 100);
-      progressBar.classList.toggle('bg-info', pct < 100);
-    }
-
-    // --------------------------------------------
-    // Problem generation (same rules + division exact)
-    // --------------------------------------------
-    function makeProblemForStage(info) {
-      const [dA, dB] = pickDigitPair();
-      let a = randByDigits(dA);
-      let b = randByDigits(dB);
-
-      if (info.op === '+') {
-        return { a, b, op: '+', answer: a + b, display: `${a} + ${b}` };
-      }
-      if (info.op === '-') {
-        const x = Math.max(a, b);
-        const y = Math.min(a, b);
-        return { a: x, b: y, op: '-', answer: x - y, display: `${x} - ${y}` };
-      }
-      if (info.op === '×') {
-        return { a, b, op: '×', answer: a * b, display: `${a} × ${b}` };
-      }
-      if (info.op === '÷') {
-        const targetDividendDigits = dA;
-        const targetDivisorDigits = dB;
-
-        for (let tries = 0; tries < 5000; tries++) {
-          const divisor = randByDigits(targetDivisorDigits);
-          const quotient = randInt(1, 99);
-          const dividend = divisor * quotient;
-          if (dividend < 1 || dividend > 99) continue;
-
-          const dividendDigits = (dividend <= 9) ? 1 : 2;
-          const divisorDigits = (divisor <= 9) ? 1 : 2;
-
-          if (dividendDigits !== targetDividendDigits) continue;
-          if (divisorDigits !== targetDivisorDigits) continue;
-
-          return { a: dividend, b: divisor, op: '÷', answer: quotient, display: `${dividend} ÷ ${divisor}` };
-        }
-
-        // fallback
-        const divisor = randInt(1, 9);
-        const quotient = randInt(1, 9);
-        const dividend = divisor * quotient;
-        return { a: dividend, b: divisor, op: '÷', answer: quotient, display: `${dividend} ÷ ${divisor}` };
-      }
-      throw new Error('Unknown op');
-    }
-
-    // --------------------------------------------
-    // Slot animation helpers
-    // --------------------------------------------
-    function buildStack(el, count = 18) {
-      el.innerHTML = '';
-      for (let i = 0; i < count; i++) {
-        const n = document.createElement('div');
-        n.className = 'n mono';
-        n.textContent = String(randInt(0, 9));
-        el.appendChild(n);
-      }
-    }
-
-    function spinReelsOnce(targetA, targetB, op) {
-      // Setup
-      opSymbol.textContent = op;
-      spinBadge.classList.remove('d-none');
-
-      buildStack(stackA);
-      buildStack(stackB);
-
-      let posA = 0;
-      let posB = 0;
-
-      const speedA = 28 + Math.random()*10;
-      const speedB = 24 + Math.random()*10;
-
-      reelA.classList.add('pulse');
-      reelB.classList.add('pulse');
-      setTimeout(() => { reelA.classList.remove('pulse'); reelB.classList.remove('pulse'); }, 700);
-
-      // Spin tick: just moving the stack up
-      const startAt = performance.now();
-      const spinMs = 900;      // base spin
-      const slowMs = 520;      // slow down phase
-      const totalMs = spinMs + slowMs;
-
-      windowA.textContent = '-';
-      windowB.textContent = '-';
-
-      state.phase = 'spinning';
-      setInputLocked(true);
-
-      if (state.timers.spin) clearInterval(state.timers.spin);
-
-      state.timers.spin = setInterval(() => {
-        const t = performance.now() - startAt;
-        const k = Math.max(0, Math.min(1, t / totalMs)); // 0..1
-
-        // ease-out slowdown
-        const ease = 1 - Math.pow(1 - k, 3);
-        const factor = 1 - (ease * 0.85);
-
-        posA += speedA * factor;
-        posB += speedB * factor;
-
-        stackA.style.transform = `translateY(${-posA}px)`;
-        stackB.style.transform = `translateY(${-posB}px)`;
-
-        AudioFX.spinTick();
-
-        if (t >= totalMs) {
-          clearInterval(state.timers.spin);
-          state.timers.spin = null;
-          spinBadge.classList.add('d-none');
-
-          // reveal target
-          windowA.textContent = String(targetA);
-          windowB.textContent = String(targetB);
-
-          // reset stacks (keep visuals clean)
-          stackA.innerHTML = '';
-          stackB.innerHTML = '';
-
-          reelA.classList.add('pulse');
-          reelB.classList.add('pulse');
-          setTimeout(() => { reelA.classList.remove('pulse'); reelB.classList.remove('pulse'); }, 700);
-        }
-      }, 33);
-    }
-
-    // --------------------------------------------
-    // Question lifecycle: spin -> wait -> answering (timer) -> submit/timeout -> next
-    // --------------------------------------------
-    function startQuestionTimer(timeLimitSec) {
-      const startedAt = performance.now();
-      const deadline = startedAt + timeLimitSec * 1000;
-
-      // set ring initial
-      setRingProgress(0, String(timeLimitSec));
-
-      if (state.timers.questionTick) clearInterval(state.timers.questionTick);
-      if (state.timers.questionTimeout) clearTimeout(state.timers.questionTimeout);
-
-      state.timers.questionTick = setInterval(() => {
-        const now = performance.now();
-        const remainMs = Math.max(0, deadline - now);
-        const remainSec = remainMs / 1000;
-
-        const pct = (1 - (remainMs / (timeLimitSec * 1000))) * 100;
-        const text = remainSec.toFixed(1);
-
-        setRingProgress(pct, text);
-
-        // warning vibe
-        if (remainSec <= 2.0) {
-          timerRing.style.boxShadow = '0 0 12px rgba(255,77,109,.65), 0 0 30px rgba(255,213,79,.18)';
-        } else {
-          timerRing.style.boxShadow = 'var(--glow)';
-        }
-      }, 60);
-
-      state.timers.questionTimeout = setTimeout(() => {
-        onTimeout();
-      }, timeLimitSec * 1000);
-    }
-
-    function stopQuestionTimer() {
-      if (state.timers.questionTick) clearInterval(state.timers.questionTick);
-      if (state.timers.questionTimeout) clearTimeout(state.timers.questionTimeout);
-      state.timers.questionTick = null;
-      state.timers.questionTimeout = null;
-      timerRing.style.boxShadow = 'var(--glow)';
-    }
-
-    function nextQuestion() {
-      clearTimers();
-      stopQuestionTimer();
-      updateHUD();
-
-      const info = stageInfo();
-      const p = makeProblemForStage(info);
-
-      state.current = {
-        ...p,
-        stage: info.stage,
-        timeLimitSec: info.timeLimitSec,
-        waitSec: info.waitSec,
-        startedAt: null,
-      };
-
-      // Spin reels
-      questionLine.textContent = 'SPIN...';
-      questionLine.classList.add('blink');
-      spinReelsOnce(state.current.a, state.current.b, info.op);
-
-      // After spin ends, show question text + wait lock + then unlock
-      state.timers.waitUnlock = setTimeout(() => {
-        state.phase = 'waiting';
-
-        questionLine.classList.remove('blink');
-        questionLine.textContent = `${state.current.display} = ?`;
-        questionLine.classList.add('pulse');
-        setTimeout(() => questionLine.classList.remove('pulse'), 650);
-
-        // wait phase lock (stage waitSec)
-        setInputLocked(true);
-        answerInput.value = '';
-
-        const waitMs = info.waitSec * 1000;
-
-        // show wait on ring: fill from 0->100 during wait, then start question timer
-        const waitStart = performance.now();
-        const waitEnd = waitStart + waitMs;
-
-        setRingProgress(0, `${info.waitSec}`);
-
-        state.timers.questionTick = setInterval(() => {
-          const now = performance.now();
-          const remain = Math.max(0, waitEnd - now);
-          const pct = (1 - (remain / waitMs)) * 100;
-          setRingProgress(pct, (remain/1000).toFixed(1));
-          if (remain <= 0) {
-            clearInterval(state.timers.questionTick);
-            state.timers.questionTick = null;
-
-            // Now answering phase
-            state.phase = 'answering';
-            state.current.startedAt = performance.now();
-            setInputLocked(false);
-            AudioFX.unlock();
-
-            startQuestionTimer(info.timeLimitSec);
-          }
-        }, 60);
-      }, 1500); // spin visual time buffer (matches reel spin duration)
-    }
-
-    function logAttempt({ input, result, remainSec }) {
-      const info = stageInfo();
-      state.seq += 1;
-
-      const row = {
-        no: state.seq,
-        stage: info.stage,
-        problem: `${state.current.display} = ?`,
-        input: (input === null || input === undefined) ? '' : String(input),
-        answer: String(state.current.answer),
-        result,
-        remainSec: (remainSec === null || remainSec === undefined) ? '' : remainSec.toFixed(1),
-      };
-
-      state.log.unshift(row);
-      if (state.log.length > LOG_LIMIT) state.log.pop();
-      renderLog();
-    }
-
-    function renderLog() {
-      if (state.log.length === 0) {
-        logBody.innerHTML = '<tr><td colspan="7" class="text-white-50">아직 기록이 없습니다.</td></tr>';
-        return;
-      }
-
-      const escapeHtml = (s) => String(s)
-        .replaceAll('&','&amp;')
-        .replaceAll('<','&lt;')
-        .replaceAll('>','&gt;')
-        .replaceAll('"','&quot;')
-        .replaceAll("'","&#039;");
-
-      logBody.innerHTML = state.log.map(r => {
-        const badge =
-          r.result === '정답' ? 'text-bg-success' :
-          r.result === '오답' ? 'text-bg-danger' :
-          'text-bg-warning text-dark';
-
-        return `
-          <tr>
-            <td class="mono text-white-50">${r.no}</td>
-            <td class="mono">${r.stage}</td>
-            <td class="mono">${escapeHtml(r.problem)}</td>
-            <td class="mono">${escapeHtml(r.input)}</td>
-            <td class="mono">${escapeHtml(r.answer)}</td>
-            <td><span class="badge ${badge}">${escapeHtml(r.result)}</span></td>
-            <td class="mono text-white-50">${escapeHtml(r.remainSec)}</td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function remainSecNow() {
-      if (!state.current?.startedAt) return null;
-      const limit = state.current.timeLimitSec;
-      const elapsed = (performance.now() - state.current.startedAt) / 1000;
-      return Math.max(0, limit - elapsed);
-    }
-
-    function onTimeout() {
-      if (!state.running) return;
-      if (state.phase !== 'answering') return;
-
-      stopQuestionTimer();
-      setInputLocked(true);
-
-      state.attempt += 1;
-      state.timeout += 1;
-      state.streak = 0;
-      state.score = Math.max(0, state.score - 1);
-
-      AudioFX.timeout();
-      setToast(`타임아웃! 정답: ${state.current.answer}`, 'warning');
-
-      questionLine.classList.add('shake');
-      setTimeout(() => questionLine.classList.remove('shake'), 380);
-
-      logAttempt({ input: null, result: '타임아웃', remainSec: 0 });
-
-      updateHUD();
-      setTimeout(() => { if (state.running) nextQuestion(); }, 450);
-    }
-
-    function checkStageAdvanceOrFinish() {
-      const info = stageInfo();
-      if (state.gotCorrectThisStage < info.needCorrect) return;
-
-      if (state.stageIndex < STAGES.length - 1) {
-        state.stageIndex += 1;
-        state.gotCorrectThisStage = 0;
-        AudioFX.stageUp();
-        setToast(`${STAGES[state.stageIndex].stage}단계로 이동!`, 'info');
-        updateHUD();
-        nextQuestion();
-        return;
-      }
-
-      state.running = false;
-      state.phase = 'finished';
-      clearTimers();
-      stopQuestionTimer();
-      setInputLocked(true);
-
-      questionLine.classList.remove('blink');
-      questionLine.textContent = `JACKPOT! 완료 🎰  (정답 ${state.correct} / 오답 ${state.wrong} / 타임아웃 ${state.timeout})`;
-      setRingProgress(100, 'END');
-      setToast('전체 단계 완료!', 'success');
-
-      btnStart.disabled = false;
-      stageSelect.disabled = false;
-    }
-
-    function submitAnswer() {
-      if (!state.running) return;
-      if (state.phase !== 'answering') return;
-      if (state.lockInput) return;
-
-      const raw = answerInput.value;
-      if (raw === '' || raw == null) {
-        setToast('정답을 입력하세요.', 'secondary');
-        answerInput.focus();
-        return;
-      }
-
-      const user = Number(raw);
-      const ans = state.current.answer;
-
-      const remain = remainSecNow();
-      stopQuestionTimer();
-      setInputLocked(true);
-
-      state.attempt += 1;
-
-      if (Number.isFinite(user) && user === ans) {
-        state.correct += 1;
-        state.streak += 1;
-        state.gotCorrectThisStage += 1;
-
-        // score: 기본 10 + 남은시간 보너스(최대 10) + 연속 보너스
-        const timeBonus = remain == null ? 0 : Math.floor(Math.min(10, remain));
-        const streakBonus = Math.min(10, state.streak);
-        state.score += (10 + timeBonus + streakBonus);
-
-        AudioFX.correct();
-        setToast(`정답! (+${10 + timeBonus + streakBonus}점)`, 'success');
-
-        logAttempt({ input: user, result: '정답', remainSec: remain ?? null });
-
-        updateHUD();
-        checkStageAdvanceOrFinish();
-        if (state.running) setTimeout(() => nextQuestion(), 320);
-      } else {
-        state.wrong += 1;
-        state.streak = 0;
-        state.score = Math.max(0, state.score - 2);
-
-        AudioFX.wrong();
-        setToast(`오답! 정답: ${ans}`, 'danger');
-
-        questionLine.classList.add('shake');
-        setTimeout(() => questionLine.classList.remove('shake'), 380);
-
-        logAttempt({ input: user, result: '오답', remainSec: remain ?? null });
-
-        updateHUD();
-        setTimeout(() => { if (state.running) nextQuestion(); }, 450);
-      }
-    }
-
-    // --------------------------------------------
-    // Game start / restart
-    // --------------------------------------------
-    function startGameFromSelectedStage() {
-      const selected = Number(stageSelect.value);
-      const idx = STAGES.findIndex(s => s.stage === selected);
-      state.stageIndex = (idx >= 0) ? idx : 0;
-
-      state.running = true;
-      state.phase = 'idle';
-      state.gotCorrectThisStage = 0;
-
-      state.streak = 0;
-      state.score = 0;
-
-      state.correct = 0;
-      state.wrong = 0;
-      state.timeout = 0;
-      state.attempt = 0;
-
-      state.current = null;
-
-      clearTimers();
-      stopQuestionTimer();
-      setRingProgress(0, '-');
-      windowA.textContent = '-';
-      windowB.textContent = '-';
-      opSymbol.textContent = '?';
-
-      btnStart.disabled = true;
-      stageSelect.disabled = true;
-
-      updateHUD();
-      setToast(`${STAGES[state.stageIndex].stage}단계부터 시작!`, 'primary');
-      nextQuestion();
-    }
-
-    function restartCurrentStage() {
-      if (!state.running) {
-        // running 아니면 선택된 단계 기준으로 시작
-        startGameFromSelectedStage();
-        return;
-      }
-
-      clearTimers();
-      stopQuestionTimer();
-
-      state.gotCorrectThisStage = 0;
-      state.streak = 0;
-      // 점수/전체 정답오답은 유지할지 애매 -> "현재 단계 재시작"은 누적 유지로 처리
-      updateHUD();
-
-      setToast(`${stageInfo().stage}단계 재시작!`, 'info');
-      nextQuestion();
-    }
-
-    function restartAll() {
-      state.running = false;
-      state.phase = 'idle';
-      clearTimers();
-      stopQuestionTimer();
-
-      state.stageIndex = 0;
-      state.gotCorrectThisStage = 0;
-
-      state.streak = 0;
-      state.score = 0;
-      state.correct = 0;
-      state.wrong = 0;
-      state.timeout = 0;
-      state.attempt = 0;
-
-      state.current = null;
-
-      btnStart.disabled = false;
-      stageSelect.disabled = false;
-
-      setInputLocked(true);
-      answerInput.value = '';
-
-      windowA.textContent = '-';
-      windowB.textContent = '-';
-      opSymbol.textContent = '?';
-      questionLine.textContent = '시작을 눌러주세요';
-      questionLine.classList.remove('blink');
-
-      setRingProgress(0, '-');
-      progressBar.style.width = '0%';
-      progressBar.classList.remove('bg-success');
-      progressBar.classList.add('bg-info');
-
-      updateHUD();
-      setToast('처음부터 리셋 완료', 'secondary');
-    }
-
-    // --------------------------------------------
-    // CSV
-    // --------------------------------------------
-    function downloadCsv() {
-      const rows = [...state.log].reverse(); // oldest first
-      const header = ['no','stage','problem','input','answer','result','remainSec'];
-      const esc = (v) => {
-        const s = String(v ?? '');
-        const needs = /[",\n]/.test(s);
-        const q = s.replaceAll('"', '""');
-        return needs ? `"${q}"` : q;
-      };
-
-      const csv = [
-        header.join(','),
-        ...rows.map(r => header.map(h => esc(r[h])).join(',')),
-      ].join('\n');
-
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'math-slot-log.csv';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-      URL.revokeObjectURL(url);
-    }
-
-    // --------------------------------------------
-    // Events
-    // --------------------------------------------
-    btnStart.addEventListener('click', () => startGameFromSelectedStage());
-    btnRestartStage.addEventListener('click', () => restartCurrentStage());
-    btnRestartAll.addEventListener('click', () => restartAll());
-
-    answerForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      submitAnswer();
-    });
-
-    btnClearLog.addEventListener('click', () => {
-      state.log = [];
-      renderLog();
-      setToast('로그를 비웠습니다.', 'secondary');
-    });
-
-    btnDownloadCsv.addEventListener('click', () => {
-      downloadCsv();
-      setToast('CSV 다운로드를 시작했습니다.', 'info');
-    });
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') restartAll();
-      if (e.key === 'Enter') AudioFX.unlock(); // allow audio on first interaction
-    });
-
-    // init
-    function init() {
-      renderLog();
-      restartAll();
-    }
-    init();
-  </script>
 </body>
 </html>
+

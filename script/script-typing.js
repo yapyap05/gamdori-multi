@@ -392,7 +392,7 @@ function resetGame() {
 // --------------------------------------------
 btnStart.addEventListener('click', initGame);
 btnRestartAll.addEventListener('click', resetGame);
-btnGotoIndex.addEventListener('click', () => location.href = 'index.html');
+btnGotoIndex.addEventListener('click', () => location.href = "../index.html");
 
 answerForm.addEventListener('submit', (e) => {
   e.preventDefault();

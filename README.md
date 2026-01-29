@@ -10,13 +10,20 @@
 # 🧱 전체 구조
 ```
 / (root)
- ├─ index.html            # 메인 허브 (게임 선택)
- ├─ xxx-game.html         # 제공 게임 화면
- ├─ style.css             # 공통 스타일 (네온, 글래스, CRT)
- ├─ xxx-game.js           # 제공 게임 로직
- └─ assets/
-     ├─ 적용전/
-     └─ 적용전/
+ .
+├── assets
+│   └── images
+│       └── carousel images
+├── css
+│   └── template_style.css
+├── script
+│   └── game-script.js
+├── templates
+│   └── game-templates.html
+├── .gitignore
+├── CNAME
+├── README.md
+└── index.html
 ```
 # 🏠 index.html 분석 요약
 - index.html은 아케이드 게임의 메인 허브 역할을 합니다.

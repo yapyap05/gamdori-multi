@@ -510,7 +510,7 @@
     });
 
     btnGotoIndex?.addEventListener("click", () => {
-        location.href = "index.html";
+        location.href = "../index.html";
     });
 
     btnClearPick?.addEventListener("click", clearPick);

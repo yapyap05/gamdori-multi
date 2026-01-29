@@ -655,7 +655,7 @@ function submitAnswer() {
 // Game start / restart
 // --------------------------------------------
 function moveToIndex() {
-    location.href = "index.html"
+    location.href = "../index.html";
 }
 
 function startGameFromSelectedStage() {

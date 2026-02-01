@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>⚖️ I am 솔로몬</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/template_style.css">
+  <style>
+    .scale-container { position: relative; width: 100%; height: 200px; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 20px; background: rgba(0,0,0,.2); border-radius: 16px; border: 1px solid rgba(255,255,255,.1); }
+    .scale-beam { 
+        width: 80%; height: 8px; background: var(--neon2); border-radius: 4px; 
+        position: absolute; bottom: 80px; transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: flex; justify-content: space-between; align-items: flex-end;
+    }
+    .scale-pivot { width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-bottom: 40px solid var(--neon); position: absolute; bottom: 40px; }
+    .scale-plate { width: 100px; height: 12px; background: var(--text); border-radius: 6px; margin-bottom: -10px; position: relative; box-shadow: var(--glow); }
+    .item-on-plate { font-size: 3.5rem; position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); }
+    .tilt-left { transform: rotate(-15deg); }
+    .tilt-right { transform: rotate(15deg); }
+  </style>
+</head>
+<body class="py-4">
+  <div class="wrap px-3">
+    <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+      <div>
+        <h1 class="h3 mb-1 neon-title"><span class="text-white-50">내가 무게를 맞출 관상인가? ⚖️</span></h1>
+        <div class="text-white-50 small"><span class="mono">더 무거운 물체를 골라 점수를 획득하세요!</span></div>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <button id="btnStart" class="btn btn-neon">시작</button>
+        <button id="btnRestartAll" class="btn btn-neon2">처음부터</button>
+        <button id="btnGotoIndex" class="btn btn-neon3">🏠</button>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-12 col-lg-7">
+        <div class="card glass machine border-0">
+          <div class="card-body">
+            <div class="d-flex justify-content-between mb-3 align-items-center">
+              <div class="d-flex gap-2">
+                <span class="chip"><span class="badge badge-soft">Stage</span> <span id="hudStage" class="mono">-</span></span>
+                <span class="chip"><span class="badge badge-soft">Score</span> <span id="hudScore" class="mono">0</span></span>
+              </div>
+              <div class="timer-ring" id="timerRing"><div id="timerText" class="mono">-</div></div>
+            </div>
+
+            <div class="progress mb-4" style="height: 10px; background: rgba(255,255,255,.1);"><div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width:0%"></div></div>
+
+            <div class="scale-container p-4">
+                <div class="scale-pivot"></div>
+                <div id="scaleBeam" class="scale-beam">
+                  <div class="scale-plate"><div id="itemA" class="item-on-plate">🤔</div></div>
+                  <div class="scale-plate"><div id="itemB" class="item-on-plate">🧐</div></div>
+                </div>
+            </div>
+
+            <div class="row g-3 mt-4">
+              <div class="col-6"><button id="btnLeft" class="btn btn-outline-info btn-lg w-100 py-4 fw-bold mono" disabled>여긴가?</button></div>
+              <div class="col-6"><button id="btnRight" class="btn btn-outline-warning btn-lg w-100 py-4 fw-bold mono" disabled>이건가?</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-5">
+        <div class="card glass border-0 mb-3">
+          <div class="card-body">
+            <h5 class="fw-bold mb-3">게임 설정 및 통계</h5>
+            <div class="row g-2 mb-3">
+              <div class="col-12">
+                <label class="form-label text-white-50 small mb-1">시작 단계 선택</label>
+                <select id="stageSelect" class="form-select">
+                  <option value="1">1단계: 풍선 vs 사과 (5초)</option>
+                  <option value="2">2단계: 사과 vs 볼링공 (4초)</option>
+                  <option value="3">3단계: 볼링공 vs 금괴 (3초)</option>
+                  <option value="4">4단계: 정밀 측정 (2.5초)</option>
+                  <option value="5">5단계: 극한의 무게 (2초)</option>
+                </select>
+              </div>
+            </div>
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="chip"><span class="badge badge-soft">정답</span> <span id="hudCorrect" class="mono">0</span></span>
+                <span class="chip"><span class="badge badge-soft">오답</span> <span id="hudWrong" class="mono">0</span></span>
+                <span class="chip"><span class="badge badge-soft">연속</span> <span id="hudStreak" class="mono">0</span></span>
+            </div>
+            <div class="small text-white-50">
+                <div class="fw-bold text-white mb-1">단계별 규칙</div>
+                <ul class="ps-3 mb-0">
+                    <li>각 단계마다 5~10개의 문제를 맞춰야 합니다.</li>
+                    <li>단계가 올라갈수록 무게 차이가 미세해집니다.</li>
+                    <li>빠르게 맞출수록 추가 보너스 점수를 얻습니다.</li>
+                </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="card glass border-0">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="fw-bold">플레이 기록</div>
+                <button id="btnClearLog" class="btn btn-outline-danger btn-sm">비우기</button>
+            </div>
+            <div class="table-responsive" style="max-height: 250px;">
+              <table class="table table-sm table-darkish align-middle mb-0">
+                <thead><tr class="text-white-50"><th>#</th><th>결과</th><th>남은시간</th></tr></thead>
+                <tbody id="logBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="toast" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
+    <div id="toastEl" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex"><div id="toastBody" class="toast-body">-</div></div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../script/script-weight.js"></script>
+</body>
+</html>

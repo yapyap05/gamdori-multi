@@ -19,6 +19,7 @@
     .bg-word { background-image: url('./assets/images/carousel_word.png'); }
     .bg-sudoku { background-image: url('./assets/images/carousel_sudoku.png'); }
   </style>
+  <script src="./script/script-rand-count.js" defer></script>
 </head>
 <body class="py-5">
 
@@ -137,21 +138,31 @@
         </div>
 
         <div class="col">
-          <div class="card glass game-card border-0" onclick="location.href='index.html'">
+          <div class="card glass game-card border-0" onclick="location.href='./templates/game-weight-compare.html'">
             <div class="card-body">
-              <h5 class="card-title text-white-50 mono">🚧 준비중</h5>
-              <p class="card-text small text-success">One Hand</p>
-              <span class="badge badge-soft text-white-50">Coming Soon</span>
+              <h5 class="card-title text-white-50 mono">I`m솔로몬</h5>
+              <p class="card-text small text-success">Weight</p>
+              <span class="badge badge-soft text-warning">NOW SERVICE</span>
             </div>
           </div>
         </div>
 
         <div class="col">
-          <div class="card glass game-card border-0" onclick="location.href='index.html'">
+          <div class="card glass game-card border-0" onclick="location.href='./templates/game-stroop.html'">
             <div class="card-body">
-              <h5 class="card-title text-white-50 mono">🚧 준비중</h5>
+              <h5 class="card-title text-white-50 mono">색깔능력자</h5>
               <p class="card-text small text-success">Pattern</p>
-              <span class="badge badge-soft text-white-50">Coming Soon</span>
+              <span class="badge badge-soft text-warning">NOW SERVICE</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card glass game-card border-0" onclick="location.href='./templates/game-pipe.html'">
+            <div class="card-body">
+              <h5 class="card-title text-white-50 mono">파이프정비기사</h5>
+              <p class="card-text small text-success">Puzzle</p>
+              <span class="badge badge-soft text-warning">NOW SERVICE</span>
             </div>
           </div>
         </div>
@@ -161,8 +172,10 @@
 
     <footer class="mt-5 pt-5 text-center border-top border-secondary border-opacity-25">
       <div class="d-flex justify-content-center gap-4 text-white-50 small mono">
-        <span>Total Plays: 1,240</span>
-        <span>Online: 42</span>
+        <!-- <span>Total Plays: 1,240</span>
+        <span>Online: 42</span> -->
+        <span id="totalPlays">Total Plays: -</span>
+        <span id="onlineCount">Online: -</span>
         <span>Last Update: 2026.01.28</span>
         <span>SPECIAL THANKS TO JSP</span>
       </div>

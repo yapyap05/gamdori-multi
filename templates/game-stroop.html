@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🚦 색깔능력자</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/template_style.css">
+  <style>
+    .stroop-display { font-size: 5rem; font-weight: 900; min-height: 220px; display: flex; align-items: center; justify-content: center; text-shadow: var(--glow-strong); background: rgba(0,0,0,.3); border-radius: 20px; border: 1px solid rgba(255,255,255,.1); margin-bottom: 20px; }
+    .btn-color-choice { height: 80px; font-size: 1.4rem; border-width: 3px; border-radius: 15px; font-weight: 800; transition: all 0.2s; }
+    .btn-color-choice:hover { transform: translateY(-3px); box-shadow: var(--glow); }
+  </style>
+</head>
+<body class="py-4">
+  <div class="wrap px-3">
+    <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-3">
+      <div>
+        <h1 class="h3 mb-1 neon-title">난 한 색만 패 🚦</h1>
+        <div class="text-white-50 small mono">글자의 색상을 빠르게 판단하세요!</div>
+      </div>
+      <div class="d-flex gap-2">
+        <button id="btnStart" class="btn btn-neon">시작</button>
+        <button id="btnRestartAll" class="btn btn-neon2">처음부터</button>
+        <button id="btnGotoIndex" class="btn btn-neon3">🏠</button>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-12 col-lg-7">
+        <div class="card glass machine border-0">
+          <div class="card-body">
+            <div class="d-flex justify-content-between mb-3 align-items-center">
+                <div class="d-flex gap-2">
+                    <span class="chip">LV. <span id="hudStage" class="mono">1</span></span>
+                    <span class="chip">SCORE: <span id="hudScore" class="mono">0</span></span>
+                </div>
+                <div class="timer-ring" id="timerRing"><div id="timerText" class="mono">-</div></div>
+            </div>
+            
+            <div class="stroop-display"><div id="wordDisplay" class="pulse">READY</div></div>
+
+            <div id="buttonArea" class="row g-2">
+                <div class="col-12 text-center text-white-50">시작 버튼을 눌러주세요</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-5">
+        <div class="card glass border-0 mb-3">
+          <div class="card-body">
+            <h5 class="fw-bold mb-3">레벨 및 규칙</h5>
+            <div class="mb-3">
+                <label class="form-label text-white-50 small mb-1">시작 단계</label>
+                <select id="stageSelect" class="form-select">
+                    <option value="1">1단계: 2색 (3.0초)</option>
+                    <option value="2">2단계: 3색 (2.5초)</option>
+                    <option value="3">3단계: 4색 (2.0초)</option>
+                    <option value="4">4단계: 고속 (1.5초)</option>
+                    <option value="5">5단계: 한계 (1.2초)</option>
+                </select>
+            </div>
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="chip"><span class="badge badge-soft">정답</span> <span id="hudCorrect" class="mono">0</span></span>
+                <span class="chip"><span class="badge badge-soft">오답</span> <span id="hudWrong" class="mono">0</span></span>
+            </div>
+            <div class="small text-white-50">
+                <div class="text-white fw-bold mb-1">주의사항</div>
+                <p class="mb-0">글자의 의미가 아닌, <span class="text-info fw-bold">'보이는 색상'</span>과 일치하는 버튼을 눌러야 합니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card glass border-0">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="fw-bold">최근 로그</div>
+                <button id="btnClearLog" class="btn btn-outline-danger btn-sm">비우기</button>
+            </div>
+            <div class="table-responsive" style="max-height: 250px;">
+              <table class="table table-sm table-darkish align-middle mb-0">
+                <thead><tr class="text-white-50"><th>#</th><th>결과</th><th>시간</th></tr></thead>
+                <tbody id="logBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="toast" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+  <script src="../script/script-stroop.js"></script>
+</body>
+</html>

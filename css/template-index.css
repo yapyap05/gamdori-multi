@@ -1,0 +1,86 @@
+/* ==========================================
+   Carousel & Hero Section
+   ========================================== */
+.carousel-item {
+  height: 400px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.carousel-caption {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  bottom: 10%;
+  z-index: 2;
+}
+
+.carousel-bg {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100%;
+  transition: transform 5s ease;
+}
+
+.carousel-item:hover .carousel-bg {
+  transform: scale(1.05);
+}
+
+/* ==========================================
+   Game Cards & List
+   ========================================== */
+.game-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+}
+
+.game-card:hover {
+  transform: translateY(-10px);
+  box-shadow: var(--glow-strong) !important;
+}
+
+.game-icon-box {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.game-card:hover .game-icon-box {
+  background: var(--neon);
+  border-color: var(--neon2);
+  transform: rotate(10deg);
+  box-shadow: var(--glow);
+}
+
+.badge-soft {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--muted);
+}
+
+.game-card .card-title {
+  font-size: 1.1rem;
+  letter-spacing: -0.5px;
+}
+
+/* ==========================================
+   Game Background Images (Assets)
+   ========================================== */
+.bg-multi   { background-image: url('../assets/images/carousel_multi.png'); }
+.bg-memory  { background-image: url('../assets/images/carousel_memory.png'); }
+.bg-word    { background-image: url('../assets/images/carousel_word.png'); }
+.bg-sudoku  { background-image: url('../assets/images/carousel_sudoku.png'); }
+.bg-2048    { background-image: url('../assets/images/carousel_2048.png'); }
+.bg-solomon { background-image: url('../assets/images/carousel_solomon.png'); }
+.bg-stroop  { background-image: url('../assets/images/carousel_stroop.png'); }
+.bg-pipe    { background-image: url('../assets/images/carousel_pipe.png'); }
+.bg-breaker { background-image: url('../assets/images/carousel_breaker.png'); }
